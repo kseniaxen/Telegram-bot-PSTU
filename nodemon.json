@@ -1,0 +1,5 @@
+{
+  "watch": ["*.py", "*.env"],
+  "ext": "py, env",
+  "exec": "python main.py"
+}

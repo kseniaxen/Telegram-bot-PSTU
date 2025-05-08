@@ -1,9 +1,11 @@
 # TELEGRAM BOT for PSTU
 
 
-## Установка
+## Установка и запуск
 
+### В режиме разработки
 ```bash
-git clone https://github.com/ваш_аккаунт/ваш_проект.git
-cd ваш_проект
+git clone https://github.com/kseniaxen/Telegram-bot-PSTU
+cd Telegram-bot-PSTU
 pip install -r requirements.txt
+nodemon --exec python main.py

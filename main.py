@@ -71,18 +71,37 @@ async def show_specialties_menu(message: types.Message):
     TEXTS["specialties"]["menu"]["aspirantura"]
 ])
 async def handle_specialties(message: types.Message):
+    info = TEXTS["specialties"]["info_main"]
     match message.text:
         case text if text == TEXTS["specialties"]["menu"]["bachelor"]:
-            response = "Бакалавр"
+            programs = TEXTS["specialties"]["bachelor"]
+            title = "🎓 <b>Программы бакалавриата:</b>"
         case text if text == TEXTS["specialties"]["menu"]["specialist"]:
-            response = "Специалист"
+            programs = TEXTS["specialties"]["specialist"]
+            title = "📚 <b>Программы специалитета:</b>"
         case text if text == TEXTS["specialties"]["menu"]["master"]:
-            response = "Магистратура"
+            programs = TEXTS["specialties"]["master"]
+            title = "👨‍🎓 <b>Программы магистратуры:</b>"
         case text if text == TEXTS["specialties"]["menu"]["aspirantura"]:
-            response = "Аспирантура"
+            programs = TEXTS["specialties"]["aspirantura"]
+            title = "👨‍🔬 <b>Программы аспирантуры:</b>"
+            info = TEXTS["specialties"]["info_asp"]
         case _:
-            response = "Неизвестная команда"
-    await message.answer(response, reply_markup=specialties_menu, parse_mode="HTML")
+            await message.answer("Неизвестная команда", reply_markup=specialties_menu)
+            return
+
+    response = (
+            f"{title}\n\n" +
+            "\n".join(f"• {program}" for program in programs) +
+            f"\n\n{info}"
+    )
+
+    await message.answer(
+        response,
+        reply_markup=specialties_menu,
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
 
 #Назад
 @router.message(lambda msg: msg.text == "⬅️ Назад")
@@ -92,27 +111,35 @@ async def back_to_main_menu(message: types.Message):
 #График работы
 @router.message(lambda msg: msg.text == TEXTS["menu"]["schedule"])
 async def show_schedule(message: types.Message):
-    await message.answer(TEXTS["main"]["schedule"], parse_mode="HTML")
+    await message.answer(TEXTS["schedule"], parse_mode="HTML")
 
 #Документы
 @router.message(lambda msg: msg.text == TEXTS["menu"]["documents"])
 async def show_documents(message: types.Message):
-    await message.answer(TEXTS["main"]["documents"], parse_mode="HTML")
+    await message.answer(TEXTS["documents"], parse_mode="HTML")
 
 #Контакты
 @router.message(lambda msg: msg.text == TEXTS["menu"]["contacts"])
 async def show_contacts(message: types.Message):
-    await message.answer(TEXTS["main"]["contacts"], parse_mode="HTML")
+    await message.answer(TEXTS["contacts"], parse_mode="HTML")
 
 #Сайт
 @router.message(lambda msg: msg.text == TEXTS["menu"]["site"])
 async def show_website(message: types.Message):
-    await message.answer(TEXTS["main"]["site"], parse_mode="HTML")
+    await message.answer(TEXTS["site"], parse_mode="HTML")
 
 #Сроки приема
 @router.message(lambda msg: msg.text == TEXTS["menu"]["deadlines"])
 async def show_deadlines(message: types.Message):
-    await message.answer(TEXTS["main"]["deadlines"], parse_mode="HTML")
+    deadlines = TEXTS["deadlines"]
+    programs = [f"<b>{item['name']}:</b> {item['dates']}" for item in deadlines["periods"]]
+
+    response = (
+            f"{deadlines['title']}\n\n" +
+            "\n".join(f"• {program}" for program in programs) +
+            f"\n\n{deadlines['info']}"
+    )
+    await message.answer(response, parse_mode="HTML")
 
 #Связь с оператором
 @router.message(lambda msg: msg.text == TEXTS["menu"]["operator"])

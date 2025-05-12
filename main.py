@@ -15,42 +15,24 @@ dp.include_router(router)
 with open("text.json", "r", encoding="utf-8") as file:
     TEXTS = json.load(file)
 
-# Главное меню
-main_menu = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text=TEXTS["buttons"]["specialties"]), KeyboardButton(text=TEXTS["buttons"]["documents"])],
-        [KeyboardButton(text=TEXTS["buttons"]["deadlines"]), KeyboardButton(text=TEXTS["buttons"]["site"])],
-        [KeyboardButton(text=TEXTS["buttons"]["schedule"]), KeyboardButton(text=TEXTS["buttons"]["contacts"])],
-        [KeyboardButton(text=TEXTS["buttons"]["operator"])]
-    ],
-    resize_keyboard=True
-)
+button_keys = {
+    "main_menu": ["specialties", "documents", "deadlines", "site", "schedule", "contacts", "operator"],
+    "specialties_menu": ["bachelor", "specialist", "master", "aspirantura", "back"]
+}
 
-# Меню направлений подготовки
-specialties_menu = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text=TEXTS["buttons"]["bachelor"]), KeyboardButton(text=TEXTS["buttons"]["specialist"])],
-        [KeyboardButton(text=TEXTS["buttons"]["master"]), KeyboardButton(text=TEXTS["buttons"]["aspirantura"])],
-        [KeyboardButton(text=TEXTS["buttons"]["back"])]
-    ],
-    resize_keyboard=True
-)
+def create_menu(buttons: list, buttons_per_row: int = 2) -> ReplyKeyboardMarkup:
+    keyboard = []
+    for i in range(0, len(buttons), buttons_per_row):
+        row = buttons[i:i + buttons_per_row]
+        keyboard.append([KeyboardButton(text=TEXTS["buttons"][btn]) for btn in row])
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+# Создаем все меню
+main_menu = create_menu(button_keys["main_menu"])
+specialties_menu = create_menu(button_keys["specialties_menu"])
 
 # Список всех кнопок меню
-all_menu_buttons = [
-    TEXTS["buttons"]["specialties"],
-    TEXTS["buttons"]["documents"],
-    TEXTS["buttons"]["deadlines"],
-    TEXTS["buttons"]["site"],
-    TEXTS["buttons"]["schedule"],
-    TEXTS["buttons"]["contacts"],
-    TEXTS["buttons"]["operator"],
-    TEXTS["buttons"]["bachelor"],
-    TEXTS["buttons"]["specialist"],
-    TEXTS["buttons"]["master"],
-    TEXTS["buttons"]["aspirantura"],
-    TEXTS["buttons"]["back"]
-]
+all_menu_buttons = [TEXTS["buttons"][key] for menu in button_keys.values() for key in menu]
 
 #Начало работы
 @router.message(Command("start"))
@@ -107,61 +89,25 @@ async def handle_specialties(message: types.Message):
 async def back_to_main_menu(message: types.Message):
     await start(message)
 
-#График работы
-@router.message(lambda msg: msg.text == TEXTS["buttons"]["schedule"])
-async def show_schedule(message: types.Message):
-    response = (
-            f"{TEXTS["schedule"]["title"]}\n\n" +
-            "\n".join(f"{schedule}" for schedule in TEXTS["schedule"]["data"]) +
-            f"\n\n{TEXTS["schedule"]["extra"]}"
-    )
+# Универсальный обработчик
+async def send_section(message: types.Message, section_name: str):
+    section = TEXTS[section_name]
+    if "values" in section["data"]:
+        content = "\n".join(section["data"]["values"])
+    else:
+        content = "\n".join(f"<b>{item['name']}:</b> {item['value']}" for item in section["data"])
+
+    response = f"{section['title']}\n\n{content}"
+    if section.get("extra"):
+        response += f"\n\n{section['extra']}"
     await message.answer(response, parse_mode="HTML")
 
-#Документы
-@router.message(lambda msg: msg.text == TEXTS["buttons"]["documents"])
-async def show_documents(message: types.Message):
-    response = (
-            f"{TEXTS["documents"]["title"]}\n\n" +
-            "\n".join(f"{document}" for document in TEXTS["documents"]["data"]) +
-            f"\n\n{TEXTS["documents"]["extra"]}"
-    )
-    await message.answer(response, parse_mode="HTML")
-
-#Контакты
-@router.message(lambda msg: msg.text == TEXTS["buttons"]["contacts"])
-async def show_contacts(message: types.Message):
-    response = (
-            f"{TEXTS['contacts']['title']}\n\n" +
-            "\n".join(
-                f"{contact['name']}\n{contact['value']}"
-                for contact in TEXTS["contacts"]["data"]
-            ) +
-            f"\n\n{TEXTS['contacts']['extra']}"
-    )
-    await message.answer(response, parse_mode="HTML")
-
-#Сайт
-@router.message(lambda msg: msg.text == TEXTS["buttons"]["site"])
-async def show_website(message: types.Message):
-    response = (
-            f"{TEXTS["site"]["title"]}\n\n" +
-            "\n".join(f"{site}" for site in TEXTS["site"]["data"]) +
-            f"\n\n{TEXTS["site"]["extra"]}"
-    )
-    await message.answer(response, parse_mode="HTML")
-
-#Сроки приема
-@router.message(lambda msg: msg.text == TEXTS["buttons"]["deadlines"])
-async def show_deadlines(message: types.Message):
-    deadlines = TEXTS["deadlines"]
-    programs = [f"<b>{item['name']}:</b> {item['dates']}" for item in deadlines["data"]]
-
-    response = (
-            f"{deadlines['title']}\n\n" +
-            "\n".join(f"• {program}" for program in programs) +
-            f"\n\n{deadlines['extra']}"
-    )
-    await message.answer(response, parse_mode="HTML")
+# Регистрация всех обработчиков
+sections = ["documents", "schedule", "site", "contacts", "deadlines"]
+for section in sections:
+    @router.message(lambda msg, sec=section: msg.text == TEXTS["buttons"][sec])
+    async def handler(message: types.Message, sec=section):
+        await send_section(message, sec)
 
 #Связь с оператором
 @router.message(lambda msg: msg.text == TEXTS["buttons"]["operator"])

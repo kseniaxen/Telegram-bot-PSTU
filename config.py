@@ -6,6 +6,7 @@ load_dotenv()
 class Config:
     BOT_TOKEN = os.getenv("BOT_TOKEN")
     OPERATOR_CHAT_ID = int(os.getenv("OPERATOR_CHAT_ID", 0))
+    BOT_ID = int(BOT_TOKEN.split(":")[0])  # Получаем ID из токена
 
     BUTTON_KEYS = {
         "main_menu": ["specialties", "documents", "deadlines", "site", "schedule", "contacts", "operator"],

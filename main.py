@@ -1,11 +1,15 @@
 from aiogram import Bot, Dispatcher
-from handlers import base, specialties, sections, operator
+from aiogram.fsm.storage.memory import MemoryStorage
+
 from config import Config
+from handlers import base, specialties, sections, operator
 
+# Инициализация хранилища состояний
+storage = MemoryStorage()
 bot = Bot(token=Config.BOT_TOKEN)
-dp = Dispatcher()
+dp = Dispatcher(storage=storage)
 
-# Подключаем все роутеры
+# Подключение роутеров
 dp.include_routers(
     base.router,
     specialties.router,

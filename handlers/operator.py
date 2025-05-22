@@ -15,7 +15,7 @@ user_questions = {}
 
 @router.message(F.text == TEXTS["buttons"]["operator"])
 async def request_operator(message: types.Message, state: FSMContext):
-    """Обработка нажатия кнопки 'Оператор'"""
+    """Обработка нажатия кнопки 'Связаться с оператором'"""
     await message.answer(
         "📝 Пожалуйста, опишите ваш вопрос в одном сообщении:",
         reply_markup=ReplyKeyboardRemove()

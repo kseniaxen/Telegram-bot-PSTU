@@ -9,6 +9,6 @@ class Config:
     BOT_ID = int(BOT_TOKEN.split(":")[0])  # Получаем ID из токена
 
     BUTTON_KEYS = {
-        "main_menu": ["specialties", "documents", "deadlines", "site", "schedule", "contacts", "operator"],
+        "main_menu": ["specialties", "documents", "deadlines", "site", "schedule", "contacts", "unique_code"], #"operator"
         "specialties_menu": ["bachelor", "specialist", "master", "aspirantura", "back"]
     }

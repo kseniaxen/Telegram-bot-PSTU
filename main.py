@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import Config
-from handlers import base, specialties, sections, operator
+from handlers import base, specialties, sections, operator, unique_code
 
 # Инициализация хранилища состояний
 storage = MemoryStorage()
@@ -14,7 +14,8 @@ dp.include_routers(
     base.router,
     specialties.router,
     sections.router,
-    operator.router
+    operator.router,
+    unique_code.router
 )
 
 if __name__ == "__main__":

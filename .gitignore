@@ -25,3 +25,5 @@ env/
 .DS_Store
 .env
 text.json
+*.db
+data/

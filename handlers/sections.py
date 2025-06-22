@@ -1,6 +1,5 @@
 from aiogram import Router, types
 from utils import load_texts
-from config import Config
 
 TEXTS = load_texts()
 router = Router()

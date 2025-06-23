@@ -6,7 +6,7 @@ def load_texts(file_path="text.json"):
     with open(file_path, "r", encoding="utf-8") as file:
         return json.load(file)
 
-def load_case_data(file_path: str = 'data/20_06_2025.csv') -> Dict[str, Any]:
+def load_case_data(file_path: str = 'data/data.csv') -> Dict[str, Any]:
     """Загружает данные из CSV файла и возвращает словарь с кэшированными данными"""
     data = {}
     try:

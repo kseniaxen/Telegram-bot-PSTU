@@ -8,4 +8,4 @@
 git clone https://github.com/kseniaxen/Telegram-bot-PSTU
 cd Telegram-bot-PSTU
 pip install -r requirements.txt
-nodemon --exec python main.py
+python main.py

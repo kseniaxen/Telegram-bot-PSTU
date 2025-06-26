@@ -13,9 +13,9 @@ def load_case_data(file_path: str = 'data/data.csv') -> Dict[str, Any]:
         with open(file_path, mode='r', encoding='utf-8') as file:
             reader = csv.DictReader(file, delimiter=';')
             for row in reader:
-                data[row['НомерЛичногоДела']] = {
-                    'УникальныйКод': row['УникальныйКод'],
-                    'ФИО': row['ФизическоеЛицо']
+                data[row['УникальныйКод']] = {
+                    'ФизическоеЛицо': row['ФизическоеЛицо'],
+                    'УникальныйКод': row['УникальныйКод']
                 }
         return data
     except FileNotFoundError:

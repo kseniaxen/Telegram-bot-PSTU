@@ -24,6 +24,6 @@ env/
 # Other
 .DS_Store
 .env
-text.json
 *.db
 data/
+*.log

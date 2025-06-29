@@ -8,9 +8,9 @@ router = Router()
 async def send_section(message: types.Message, section_name: str):
     section = TEXTS[section_name]
     if "values" in section["data"]:
-        content = "\n".join(section["data"]["values"])
+        content = "\n\n".join(section["data"]["values"])
     else:
-        content = "\n".join(f"<b>{item['name']}:</b> {item['value']}" for item in section["data"])
+        content = "\n\n".join(f"<b>{item['name']}:</b> {item['value']}" for item in section["data"])
 
     response = f"{section['title']}\n\n{content}"
     if section.get("extra"):
